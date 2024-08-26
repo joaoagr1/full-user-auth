@@ -1,6 +1,7 @@
 package com.example.auth.domain.user;
 
 import com.example.auth.validation.DocumentValidation;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -18,7 +19,11 @@ public record RegisterDTO(
 
         @NotNull(message = "Document cannot be null")
         @DocumentValidation(message = "Invalid document")
-        String document
+        String document,
+
+        @NotNull(message = "Email cannot be null")
+        @Email(message = "Invalid email")
+        String email
 
 ) {
 }

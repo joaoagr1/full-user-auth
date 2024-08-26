@@ -45,12 +45,12 @@ public class AuthenticationController {
         if(this.repository.findByLogin(data.login()) != null) return ResponseEntity.badRequest().build();
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-        User newUser = new User(data.login(), encryptedPassword, data.role(), data.document());
+        User newUser = new User(data.login(), encryptedPassword, data.role(), data.document(), data.email());
 
         this.repository.save(newUser);
         System.out.println("User registered: " + newUser.getDocument());
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body("User create successfully");
     } catch (Exception e){
         return ResponseEntity.badRequest().body(e.getMessage());
     }

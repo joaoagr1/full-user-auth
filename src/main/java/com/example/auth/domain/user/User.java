@@ -2,6 +2,7 @@ package com.example.auth.domain.user;
 
 import com.example.auth.validation.DocumentValidation;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -41,12 +42,17 @@ public class User implements UserDetails {
     @NotNull
     private String document;
 
-    public User(String login, String password, UserRole role, String document){
+    @Email
+    private String email;
+
+    public User(String login, String encryptedPassword, UserRole role, String document, String email) {
         this.login = login;
-        this.password = password;
+        this.password = encryptedPassword;
         this.role = role;
         this.document = document;
+        this.email = email;
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
