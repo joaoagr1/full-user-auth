@@ -6,6 +6,8 @@ import com.example.auth.domain.user.RegisterDTO;
 import com.example.auth.domain.user.User;
 import com.example.auth.infra.security.TokenService;
 import com.example.auth.repositories.UserRepository;
+import com.example.auth.services.AuthorizationService;
+import com.example.auth.services.CredService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,20 +29,24 @@ public class AuthenticationController {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private AuthorizationService authorizationService;
+
+    @Autowired
+    private CredService credService;
+
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data){
-        var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        var token = tokenService.generateToken((User) auth.getPrincipal());
+      String token =  credService.login(data.login(), data.password());
 
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+      return ResponseEntity.ok(new LoginResponseDTO(token));
+
     }
 
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody @Valid RegisterDTO data){
 
-        try{
 
         if(this.repository.findByLogin(data.login()) != null) return ResponseEntity.badRequest().build();
 
@@ -51,8 +57,6 @@ public class AuthenticationController {
         System.out.println("User registered: " + newUser.getDocument());
 
         return ResponseEntity.ok().body("User create successfully");
-    } catch (Exception e){
-        return ResponseEntity.badRequest().body(e.getMessage());
-    }
+
     }
 }
