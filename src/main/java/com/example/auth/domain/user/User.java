@@ -3,14 +3,14 @@ package com.example.auth.domain.user;
 import com.example.auth.validation.DocumentValidation;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import lombok.Builder.Default;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,24 +25,28 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @NotNull
+    @NotBlank
     private String id;
 
+    @NotBlank
     @Column(unique = true)
+    @Size(min = 4, max = 50)
     private String login;
 
-    @NotNull
+    @NotBlank
+    @Size(min = 8, max = 100)
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @NotNull
-    private UserRole role;
+    @NotBlank
+    private UserRole role = UserRole.USER;
 
     @DocumentValidation
-    @NotNull
+    @NotBlank
     private String document;
 
     @Email
+    @NotBlank
     private String email;
 
     public User(String login, String encryptedPassword, UserRole role, String document, String email) {
