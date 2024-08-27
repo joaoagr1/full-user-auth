@@ -1,9 +1,6 @@
 package com.example.auth.controllers;
 
-import com.example.auth.domain.user.AuthenticationDTO;
-import com.example.auth.domain.user.LoginResponseDTO;
-import com.example.auth.domain.user.RegisterDTO;
-import com.example.auth.domain.user.User;
+import com.example.auth.domain.user.*;
 import com.example.auth.infra.security.TokenService;
 import com.example.auth.repositories.UserRepository;
 import com.example.auth.services.AuthorizationService;
@@ -12,8 +9,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,7 +42,7 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterDTO data) {
         credService.register(data);
-        return ResponseEntity.ok().body("User created successfully");
+        return ResponseEntity.ok(new AuthenticationResponseDTO("User created successfully."));
     }
 
 }
