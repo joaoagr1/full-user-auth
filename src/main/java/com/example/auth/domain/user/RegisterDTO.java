@@ -1,6 +1,7 @@
 package com.example.auth.domain.user;
 
 import com.example.auth.validation.DocumentValidation;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +20,7 @@ public record RegisterDTO(
                 message = "Password must contain at least one letter, one number, and one special character")
         String password,
 
-        @NotNull(message = "Role cannot be null")
+        @Nullable
         UserRole role,
 
         @NotBlank(message = "Document cannot be blank")
@@ -32,4 +33,8 @@ public record RegisterDTO(
         String email
 
 ) {
+
+        public static RegisterDTO withDefaultRole(String login, String password, @Nullable UserRole role, String document, String email) {
+                return new RegisterDTO(login, password, (role != null) ? role : UserRole.USER, document, email);
+        }
 }

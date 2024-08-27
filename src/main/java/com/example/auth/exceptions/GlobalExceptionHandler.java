@@ -24,13 +24,13 @@ public class GlobalExceptionHandler {
             MethodArgumentNotValidException ex,
             WebRequest request) {
 
-        Map<String, String> errors = new HashMap<>();
+        FieldError firstError = ex.getBindingResult().getFieldErrors().stream().findFirst().orElse(null);
+        String errorMessage = (firstError != null) ? firstError.getDefaultMessage() : "Validation error";
 
-        ex.getBindingResult().getFieldErrors().forEach(error -> {
-            errors.put(error.getField(), error.getDefaultMessage());
-        });
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", errorMessage);
 
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
 

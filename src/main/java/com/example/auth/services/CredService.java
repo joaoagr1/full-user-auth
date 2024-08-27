@@ -59,6 +59,6 @@ public class CredService {
         User newUser = new User(data.login(), encryptedPassword, data.role(), data.document(), data.email());
 
         repository.save(newUser);
-        System.out.println("User registered: " + newUser.getDocument());
+        System.out.println("User registered: " + newUser.getRole());
     }
 }

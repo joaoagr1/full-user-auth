@@ -10,7 +10,6 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import lombok.Builder.Default;
 
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +38,7 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    private UserRole role = UserRole.USER;
+    private UserRole role;
 
     @DocumentValidation
     @NotBlank
@@ -52,16 +51,18 @@ public class User implements UserDetails {
     public User(String login, String encryptedPassword, UserRole role, String document, String email) {
         this.login = login;
         this.password = encryptedPassword;
-        this.role = role;
+        this.role = (role != null) ? role : UserRole.USER; // Define role as UserRole.USER if not provided
         this.document = document;
         this.email = email;
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.role == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-        else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        if (this.role == UserRole.ADMIN) {
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        } else {
+            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        }
     }
 
     @Override
