@@ -45,21 +45,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody @Valid RegisterDTO data){
-
-
-        if(this.repository.findByLogin(data.login()) != null) return ResponseEntity.badRequest().body("Login already exists");
-        if (this.repository.findByDocument(data.document()) != null) return ResponseEntity.badRequest().body("Document already in use");
-        if (this.repository.findByEmail(data.email()) != null) return ResponseEntity.badRequest().body("Email already in use");
-
-
-        String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-        User newUser = new User(data.login(), encryptedPassword, data.role(), data.document(), data.email());
-
-        this.repository.save(newUser);
-        System.out.println("User registered: " + newUser.getDocument());
-
-        return ResponseEntity.ok().body("User create successfully");
-
+    public ResponseEntity<?> register(@RequestBody @Valid RegisterDTO data) {
+        credService.register(data);
+        return ResponseEntity.ok().body("User created successfully");
     }
+
 }

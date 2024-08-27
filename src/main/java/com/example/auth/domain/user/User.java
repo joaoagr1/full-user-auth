@@ -38,7 +38,7 @@ public class User implements UserDetails {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @NotBlank
+    @NotNull
     private UserRole role = UserRole.USER;
 
     @DocumentValidation
