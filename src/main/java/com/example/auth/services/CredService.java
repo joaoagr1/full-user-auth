@@ -42,57 +42,68 @@ public class CredService {
     @Autowired
     private EmailService emailService;
 
-
     public String login(String login, String password) {
-
-        //is verified
-
-        User user = Optional.ofNullable(loginRepository.findByLogin(login))
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        if (!user.isEmailVerified()) {
-            throw new UserNotVerifiedException("Email not verified");
-        }
-
-        UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(login, password);
-
-        Authentication auth = this.authenticationManager.authenticate(usernamePassword);
-
-        String token = tokenService.generateToken((User) auth.getPrincipal());
-
-        return token;
-
+        User user = findUserByLogin(login);
+        verifyEmail(user);
+        Authentication auth = authenticateUser(login, password);
+        return generateToken(auth);
     }
 
     public void register(RegisterDTO data) {
+        validateRegistrationData(data);
+        User newUser = createUser(data);
+        saveUser(newUser);
+        sendVerificationEmail(newUser);
+    }
 
+    private User findUserByLogin(String login) {
+        return Optional.ofNullable(loginRepository.findByLogin(login))
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    private void verifyEmail(User user) {
+        if (!user.isEmailVerified()) {
+            throw new UserNotVerifiedException("Email not verified");
+        }
+    }
+
+    private Authentication authenticateUser(String login, String password) {
+        UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(login, password);
+        return authenticationManager.authenticate(usernamePassword);
+    }
+
+    private String generateToken(Authentication auth) {
+        return tokenService.generateToken((User) auth.getPrincipal());
+    }
+
+    private void validateRegistrationData(RegisterDTO data) {
         Map<BooleanSupplier, Supplier<RuntimeException>> validations = Map.of(
-
-                () -> repository.existsByLogin(data.login()),
-                () -> new LoginAlreadyExistsException("Login already exists."),
-                () -> repository.existsByDocument(data.document()),
-                () -> new DocumentAlreadyExistsException("Document already in use."),
-                () -> repository.existsByEmail(data.email()),
-                () -> new EmailAlreadyExistsException("Email already in use."));
+                () -> repository.existsByLogin(data.login()), () -> new LoginAlreadyExistsException("Login already exists."),
+                () -> repository.existsByDocument(data.document()), () -> new DocumentAlreadyExistsException("Document already in use."),
+                () -> repository.existsByEmail(data.email()), () -> new EmailAlreadyExistsException("Email already in use.")
+        );
 
         validations.forEach((condition, exceptionSupplier) -> {
             if (condition.getAsBoolean()) throw exceptionSupplier.get();
         });
+    }
 
+    private User createUser(RegisterDTO data) {
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
         User newUser = new User(data.login(), encryptedPassword, data.role(), data.document(), data.email());
+        newUser.setVerificationToken(UUID.randomUUID().toString());
+        return newUser;
+    }
 
-        String verificationToken = UUID.randomUUID().toString();
-        newUser.setVerificationToken(verificationToken);
-
+    private void saveUser(User newUser) {
         repository.save(newUser);
+    }
 
+    private void sendVerificationEmail(User newUser) {
         try {
-            emailService.sendVerificationEmail(newUser.getEmail(), verificationToken);
+            emailService.sendVerificationEmail(newUser.getEmail(), newUser.getVerificationToken());
         } catch (MessagingException e) {
             throw new RuntimeException("Failed to send verification email.", e);
         }
-
-        System.out.println("User registered: " + newUser.getRole());
     }
 }

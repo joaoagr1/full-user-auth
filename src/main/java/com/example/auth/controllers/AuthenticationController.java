@@ -31,20 +31,19 @@ public class AuthenticationController {
     private CredService credService;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data){
-
-
+    public ResponseEntity login(@RequestBody @Valid LoginRequestDTO data){
 
       String token =  credService.login(data.login(), data.password());
-
       return ResponseEntity.ok(new LoginResponseDTO(token));
 
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterDTO data) {
+
         credService.register(data);
-        return ResponseEntity.ok(new AuthenticationResponseDTO("User created successfully."));
+        return ResponseEntity.ok(new SuccessResponseDTO("User created successfully."));
+
     }
 
 }
