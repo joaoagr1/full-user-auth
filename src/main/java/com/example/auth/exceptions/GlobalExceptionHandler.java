@@ -82,4 +82,14 @@ public class GlobalExceptionHandler {
         error.put("error", ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
+
+
+    @ExceptionHandler(UserNotVerifiedException.class)
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> handleUserNotVerifiedException(UserNotVerifiedException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN); // Ou BAD_REQUEST, conforme a sua escolha
+    }
+
 }

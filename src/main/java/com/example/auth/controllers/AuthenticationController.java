@@ -33,6 +33,8 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data){
 
+
+
       String token =  credService.login(data.login(), data.password());
 
       return ResponseEntity.ok(new LoginResponseDTO(token));

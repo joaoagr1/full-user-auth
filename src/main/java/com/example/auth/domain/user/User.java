@@ -48,6 +48,11 @@ public class User implements UserDetails {
     @NotBlank
     private String email;
 
+    @Column(nullable = false)
+    private boolean emailVerified = false;
+
+    private String verificationToken;
+
     public User(String login, String encryptedPassword, UserRole role, String document, String email) {
         this.login = login;
         this.password = encryptedPassword;
