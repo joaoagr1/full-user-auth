@@ -9,6 +9,7 @@ import com.example.auth.exceptions.UserNotVerifiedException;
 import com.example.auth.infra.security.TokenService;
 import com.example.auth.repositories.LoginRepository;
 import com.example.auth.repositories.UserRepository;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -36,6 +38,10 @@ public class CredService {
 
     @Autowired
     private LoginRepository loginRepository;
+
+    @Autowired
+    private EmailService emailService;
+
 
     public String login(String login, String password) {
 
@@ -76,7 +82,17 @@ public class CredService {
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
         User newUser = new User(data.login(), encryptedPassword, data.role(), data.document(), data.email());
 
+        String verificationToken = UUID.randomUUID().toString();
+        newUser.setVerificationToken(verificationToken);
+
         repository.save(newUser);
+
+        try {
+            emailService.sendVerificationEmail(newUser.getEmail(), verificationToken);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Failed to send verification email.", e);
+        }
+
         System.out.println("User registered: " + newUser.getRole());
     }
 }
