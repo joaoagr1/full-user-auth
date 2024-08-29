@@ -7,12 +7,10 @@ import com.example.auth.services.AuthorizationService;
 import com.example.auth.services.CredService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("auth")
@@ -45,5 +43,17 @@ public class AuthenticationController {
         return ResponseEntity.ok(new SuccessResponseDTO("User created successfully."));
 
     }
+
+    @GetMapping("/confirm")
+    public ResponseEntity<String> confirmEmail(@RequestParam("token") String token) {
+        boolean isVerified = authorizationService.verifyUser(token);
+        if (isVerified) {
+            return ResponseEntity.ok("Email confirmado com sucesso!");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token inválido ou expirado.");
+        }
+    }
+
+
 
 }
