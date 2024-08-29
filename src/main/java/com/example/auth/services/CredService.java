@@ -91,7 +91,7 @@ public class CredService {
     private User createUser(RegisterDTO data) {
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
         User newUser = new User(data.login(), encryptedPassword, data.role(), data.document(), data.email());
-        newUser.setVerificationToken(UUID.randomUUID().toString());
+
         return newUser;
     }
 
@@ -101,8 +101,7 @@ public class CredService {
 
     private void sendVerificationEmail(User newUser) {
         try {
-            System.out.println("token verificação:"+ newUser.getVerificationToken());
-            emailService.sendVerificationEmail(newUser.getEmail(), newUser.getVerificationToken());
+            emailService.sendVerificationEmail(newUser.getEmail(), newUser.getId());
         } catch (MessagingException e) {
             throw new RuntimeException("Failed to send verification email.", e);
         }

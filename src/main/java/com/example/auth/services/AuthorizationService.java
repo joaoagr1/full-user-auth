@@ -1,9 +1,7 @@
 package com.example.auth.services;
 
 import com.example.auth.domain.user.User;
-import com.example.auth.domain.user.VerificationToken;
 import com.example.auth.repositories.UserRepository;
-import com.example.auth.repositories.VerificationTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,11 +11,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthorizationService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    private VerificationTokenRepository tokenRepository;
+    public AuthorizationService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -25,15 +24,12 @@ public class AuthorizationService implements UserDetailsService {
     }
 
     public boolean verifyUser(String token) {
-        VerificationToken verificationToken = tokenRepository.findByToken(token);
-        if (verificationToken == null || verificationToken.isExpired()) {
-            return false;
-        }
+        User user = userRepository.findById(token)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        User user = verificationToken.getUser();
         user.setEmailVerified(true);
         userRepository.save(user);
-        tokenRepository.delete(verificationToken);
+
         return true;
     }
 }
