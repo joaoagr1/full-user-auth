@@ -101,6 +101,7 @@ public class CredService {
 
     private void sendVerificationEmail(User newUser) {
         try {
+            System.out.println("token verificação:"+ newUser.getVerificationToken());
             emailService.sendVerificationEmail(newUser.getEmail(), newUser.getVerificationToken());
         } catch (MessagingException e) {
             throw new RuntimeException("Failed to send verification email.", e);

@@ -31,6 +31,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/product").hasRole("ADMIN")
                         .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/auth/confirm").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
