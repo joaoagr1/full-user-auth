@@ -54,6 +54,10 @@ public class AuthenticationController {
         }
     }
 
+    @GetMapping("list-users")
+    public ResponseEntity<?> listUsers() {
+        return ResponseEntity.ok(repository.findAll());
+    }
 
 
 }

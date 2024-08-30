@@ -34,6 +34,7 @@ public class SecurityConfigurations {
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/auth/confirm").permitAll()
+                        .requestMatchers("/auth/list-users").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
