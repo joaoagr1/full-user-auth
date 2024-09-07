@@ -1,4 +1,4 @@
-package com.authentication.module.domain;
+package enums;
 
 public enum UserRole {
     ADMIN("admin"),

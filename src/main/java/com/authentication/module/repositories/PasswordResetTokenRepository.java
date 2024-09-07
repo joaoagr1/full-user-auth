@@ -1,6 +1,6 @@
 package com.authentication.module.repositories;
 
-import com.authentication.module.dtos.PasswordResetToken;
+import com.authentication.module.domain.PasswordResetToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

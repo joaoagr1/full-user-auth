@@ -1,10 +1,9 @@
 package com.authentication.module.services;
 
-import com.authentication.module.dtos.PasswordResetToken;
+import com.authentication.module.domain.PasswordResetToken;
 import com.authentication.module.domain.User;
 import com.authentication.module.exceptions.custom.InvalidTokenException;
 import com.authentication.module.exceptions.custom.UserNotVerifiedException;
-import com.authentication.module.infra.security.TokenService;
 import com.authentication.module.repositories.LoginRepository;
 import com.authentication.module.repositories.PasswordResetTokenRepository;
 import com.authentication.module.repositories.UserRepository;

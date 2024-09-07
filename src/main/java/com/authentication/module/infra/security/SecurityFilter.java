@@ -1,6 +1,7 @@
 package com.authentication.module.infra.security;
 
 import com.authentication.module.repositories.UserRepository;
+import com.authentication.module.services.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

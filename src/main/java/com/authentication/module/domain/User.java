@@ -2,6 +2,7 @@ package com.authentication.module.domain;
 
 import com.authentication.module.validation.DocumentValidation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

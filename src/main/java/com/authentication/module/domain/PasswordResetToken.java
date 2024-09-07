@@ -1,6 +1,5 @@
-package com.authentication.module.dtos;
+package com.authentication.module.domain;
 
-import com.authentication.module.domain.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

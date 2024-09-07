@@ -1,6 +1,6 @@
 package com.authentication.module.dtos;
 
-import com.authentication.module.domain.UserRole;
+import enums.UserRole;
 import com.authentication.module.validation.DocumentValidation;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
