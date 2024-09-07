@@ -1,6 +1,5 @@
 package com.example.auth.services;
 
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.example.auth.domain.PasswordResetToken;
 import com.example.auth.domain.User;
 import com.example.auth.exceptions.InvalidTokenException;
@@ -9,7 +8,6 @@ import com.example.auth.infra.security.TokenService;
 import com.example.auth.repositories.LoginRepository;
 import com.example.auth.repositories.PasswordResetTokenRepository;
 import com.example.auth.repositories.UserRepository;
-import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -48,12 +46,25 @@ public class LoginService {
     @Autowired
     private PasswordResetTokenRepository tokenRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+
     public String login(String login, String password) {
-        User user = findUserByLogin(login);
-        verifyEmail(user);
+
+        Optional<User> user = userRepository.findUserByLogin(login);
+
+        if (!user.isPresent()) {
+            throw new UsernameNotFoundException("Usuário não encontrado com o login: " + login);
+        }
+
+        verifyEmail(user.get());
+
         Authentication auth = authenticateUser(login, password);
+
         return generateToken(auth);
     }
+
 
     public void generatePasswordResetToken(String email) {
         Optional<User> userOptional = repository.findByEmail(email);
@@ -87,10 +98,7 @@ public class LoginService {
         tokenRepository.delete(resetToken);
     }
 
-    private User findUserByLogin(String login) {
-        return Optional.ofNullable(loginRepository.findByLogin(login))
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    }
+
 
     private void verifyEmail(User user) {
         if (!user.isEmailVerified()) {

@@ -1,16 +1,16 @@
 package com.example.auth.exceptions;
 
+import com.example.auth.domain.ErrorResponseDTO;
 import jakarta.validation.ConstraintViolationException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.WebRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,83 +20,62 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex,
-            WebRequest request) {
-
+    public ResponseEntity<ErrorResponseDTO> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
         FieldError firstError = ex.getBindingResult().getFieldErrors().stream().findFirst().orElse(null);
         String errorMessage = (firstError != null) ? firstError.getDefaultMessage() : "Validation error";
 
-        Map<String, String> errorResponse = new HashMap<>();
-        errorResponse.put("error", errorMessage);
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponseDTO(errorMessage), HttpStatus.BAD_REQUEST);
     }
-
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseBody
-    public ResponseEntity<Map<String, String>> handleConstraintViolationExceptions(
-            ConstraintViolationException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getConstraintViolations().forEach(violation -> {
-            String fieldName = violation.getPropertyPath().toString();
-            String errorMessage = violation.getMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponseDTO> handleConstraintViolationExceptions(ConstraintViolationException ex) {
+        String errorMessage = ex.getConstraintViolations().stream()
+                .map(violation -> violation.getMessage())
+                .collect(Collectors.joining(", "));
+        return new ResponseEntity<>(new ErrorResponseDTO(errorMessage), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     @ResponseBody
-    public ResponseEntity<Map<String, String>> handleBadCredentialsException(BadCredentialsException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", "Credenciais inválidas");
-        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<ErrorResponseDTO> handleBadCredentialsException(BadCredentialsException ex) {
+        return new ResponseEntity<>(new ErrorResponseDTO("Credenciais inválidas"), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(LoginAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> handleLoginAlreadyExistsException(LoginAlreadyExistsException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponseDTO> handleLoginAlreadyExistsException(LoginAlreadyExistsException ex) {
+        return new ResponseEntity<>(new ErrorResponseDTO(ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DocumentAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> handleDocumentAlreadyExistsException(DocumentAlreadyExistsException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponseDTO> handleDocumentAlreadyExistsException(DocumentAlreadyExistsException ex) {
+        return new ResponseEntity<>(new ErrorResponseDTO(ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> handleEmailAlreadyExistsException(EmailAlreadyExistsException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponseDTO> handleEmailAlreadyExistsException(EmailAlreadyExistsException ex) {
+        return new ResponseEntity<>(new ErrorResponseDTO(ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<Map<String, String>> handleInvalidCredentialsException(InvalidCredentialsException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<ErrorResponseDTO> handleInvalidCredentialsException(InvalidCredentialsException ex) {
+        return new ResponseEntity<>(new ErrorResponseDTO(ex.getMessage()), HttpStatus.UNAUTHORIZED);
     }
-
 
     @ExceptionHandler(UserNotVerifiedException.class)
     @ResponseBody
-    public ResponseEntity<Map<String, String>> handleUserNotVerifiedException(UserNotVerifiedException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN); // Ou BAD_REQUEST, conforme a sua escolha
+    public ResponseEntity<ErrorResponseDTO> handleUserNotVerifiedException(UserNotVerifiedException ex) {
+        return new ResponseEntity<>(new ErrorResponseDTO(ex.getMessage()), HttpStatus.FORBIDDEN);
     }
 
-
-
     @ExceptionHandler(InvalidTokenException.class)
-    public ResponseEntity<String> handleInvalidTokenException(InvalidTokenException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    public ResponseEntity<ErrorResponseDTO> handleInvalidTokenException(InvalidTokenException ex) {
+        return new ResponseEntity<>(new ErrorResponseDTO(ex.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+@ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleUsernameNotFoundException(UsernameNotFoundException ex) {
+        return new ResponseEntity<>(new ErrorResponseDTO(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
 }
