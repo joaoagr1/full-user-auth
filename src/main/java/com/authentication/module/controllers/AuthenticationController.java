@@ -38,21 +38,17 @@ public class AuthenticationController {
         return ResponseEntity.ok(new SuccessResponseDTO("User created successfully."));
     }
 
-    @GetMapping("/confirm")
-    public ResponseEntity<String> confirmEmail(@RequestParam("token") String token) {
-        boolean isVerified = registerService.verifyUser(token);
-        if (isVerified) {
-            return ResponseEntity.ok("Email confirmado com sucesso!");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token inválido ou expirado.");
-        }
+    @PostMapping("/confirm")
+    public ResponseEntity<SuccessResponseDTO> confirmEmail(@RequestParam("token") String token) {
+        registerService.verifyUser(token);
+        return ResponseEntity.ok(new SuccessResponseDTO("Email confirmado com sucesso!"));
     }
 
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestParam("email") String email) {
+    public ResponseEntity<SuccessResponseDTO> forgotPassword(@RequestParam("email") String email) {
         loginService.generatePasswordResetToken(email);
-        return ResponseEntity.ok("Token de recuperação de senha enviado para o e-mail.");
+        return ResponseEntity.ok(new SuccessResponseDTO("Token de recuperação de senha enviado para o e-mail."));
     }
 
     @PostMapping("/reset-password")

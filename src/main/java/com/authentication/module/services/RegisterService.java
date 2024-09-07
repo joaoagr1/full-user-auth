@@ -53,6 +53,7 @@ public class RegisterService {
 
 
     public boolean verifyUser(String token) {
+
         User user = userRepositoryepository.findById(token)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
