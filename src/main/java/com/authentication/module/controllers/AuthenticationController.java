@@ -1,9 +1,6 @@
 package com.authentication.module.controllers;
 
-import com.authentication.module.dtos.LoginRequestDTO;
-import com.authentication.module.dtos.LoginResponseDTO;
-import com.authentication.module.dtos.RegisterDTO;
-import com.authentication.module.dtos.SuccessResponseDTO;
+import com.authentication.module.dtos.*;
 import com.authentication.module.repositories.UserRepository;
 import com.authentication.module.services.LoginService;
 import com.authentication.module.services.RegisterService;
@@ -16,9 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("auth")
 public class AuthenticationController {
-
-    @Autowired
-    private UserRepository repository;
 
     @Autowired
     private LoginService loginService;
@@ -38,7 +32,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(new SuccessResponseDTO("User created successfully."));
     }
 
-    @PostMapping("/confirm")
+    @GetMapping("/confirm")
     public ResponseEntity<SuccessResponseDTO> confirmEmail(@RequestParam("token") String token) {
         registerService.verifyUser(token);
         return ResponseEntity.ok(new SuccessResponseDTO("Email confirmado com sucesso!"));
@@ -52,9 +46,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestParam("token") String token,
-                                                @RequestParam("newPassword") String newPassword) {
-        loginService.resetPassword(token, newPassword);
-        return ResponseEntity.ok("Senha redefinida com sucesso.");
+    public ResponseEntity<SuccessResponseDTO> resetPassword(@Valid @RequestBody ResetPasswordDTO resetPasswordDTO) {
+
+        loginService.resetPassword(resetPasswordDTO.token(), resetPasswordDTO.newPassword());
+        return ResponseEntity.ok(new SuccessResponseDTO("Senha redefinida com sucesso."));
     }
 }

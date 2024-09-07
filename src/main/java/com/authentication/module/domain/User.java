@@ -12,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -52,16 +53,20 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     @JsonIgnore
-    private boolean emailVerified = false;
+    private boolean isEmailVerified = false;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 
 
     public User(String login, String encryptedPassword, UserRole role, String document, String email) {
         this.login = login;
         this.password = encryptedPassword;
-        this.role = (role != null) ? role : UserRole.USER; // Define role as UserRole.USER if not provided
+        this.role = (role != null) ? role : UserRole.USER;
         this.document = document;
         this.email = email;
+        this.createdAt = LocalDateTime.now();
     }
 
     @JsonIgnore
