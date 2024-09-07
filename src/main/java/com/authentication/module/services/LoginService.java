@@ -8,9 +8,8 @@ import com.authentication.module.infra.security.TokenService;
 import com.authentication.module.repositories.LoginRepository;
 import com.authentication.module.repositories.PasswordResetTokenRepository;
 import com.authentication.module.repositories.UserRepository;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,44 +30,37 @@ public class LoginService {
     private TokenService tokenService;
 
     @Autowired
-    private UserRepository repository;
+    private UserRepository userRepository;
 
     @Autowired
     private LoginRepository loginRepository;
-
-
-    @Autowired
-    private JavaMailSender mailSender;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private PasswordResetTokenRepository tokenRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private EmailService emailService;
 
     public String login(String login, String password) {
-
         Optional<User> user = userRepository.findUserByLogin(login);
 
-        if (!user.isPresent()) {
+        if (user.isEmpty()) {
             throw new UsernameNotFoundException("Usuário não encontrado com o login: " + login);
         }
 
         verifyEmail(user.get());
-
         Authentication auth = authenticateUser(login, password);
 
         return generateToken(auth);
     }
 
-
+    @SneakyThrows
     public void generatePasswordResetToken(String email) {
-        Optional<User> userOptional = repository.findByEmail(email);
-        if (!userOptional.isPresent()) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
             throw new UsernameNotFoundException("Usuário não encontrado com o e-mail: " + email);
         }
 
@@ -78,12 +70,8 @@ public class LoginService {
 
         tokenRepository.save(passwordResetToken);
 
-        // Enviar e-mail com o token
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(user.getEmail());
-        mailMessage.setSubject("Redefinição de Senha");
-        mailMessage.setText("Para redefinir sua senha, use o token: " + token);
-        mailSender.send(mailMessage);
+
+        emailService.sendPasswordResetEmail(user.getEmail(), token);
     }
 
     public void resetPassword(String token, String newPassword) {
@@ -92,13 +80,11 @@ public class LoginService {
 
         User user = resetToken.getUser();
         user.setPassword(passwordEncoder.encode(newPassword));
-        repository.save(user);
+        userRepository.save(user);
 
-        // Remover o token após a redefinição da senha
+
         tokenRepository.delete(resetToken);
     }
-
-
 
     private void verifyEmail(User user) {
         if (!user.isEmailVerified()) {
