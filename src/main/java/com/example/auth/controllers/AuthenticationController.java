@@ -1,6 +1,9 @@
 package com.example.auth.controllers;
 
-import com.example.auth.domain.user.*;
+import com.example.auth.domain.LoginRequestDTO;
+import com.example.auth.domain.LoginResponseDTO;
+import com.example.auth.domain.RegisterDTO;
+import com.example.auth.domain.SuccessResponseDTO;
 import com.example.auth.infra.security.TokenService;
 import com.example.auth.repositories.UserRepository;
 import com.example.auth.services.AuthorizationService;

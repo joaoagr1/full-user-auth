@@ -1,4 +1,4 @@
-package com.example.auth.domain.user;
+package com.example.auth.domain;
 
 public record SuccessResponseDTO(String success) {
 }

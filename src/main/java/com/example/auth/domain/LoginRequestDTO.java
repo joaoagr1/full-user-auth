@@ -1,4 +1,4 @@
-package com.example.auth.domain.user;
+package com.example.auth.domain;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

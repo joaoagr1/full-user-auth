@@ -1,7 +1,7 @@
 package com.example.auth.services;
 
-import com.example.auth.domain.user.RegisterDTO;
-import com.example.auth.domain.user.User;
+import com.example.auth.domain.RegisterDTO;
+import com.example.auth.domain.User;
 import com.example.auth.exceptions.DocumentAlreadyExistsException;
 import com.example.auth.exceptions.EmailAlreadyExistsException;
 import com.example.auth.exceptions.LoginAlreadyExistsException;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
