@@ -23,13 +23,5 @@ public class AuthorizationService implements UserDetailsService {
         return userRepository.findByLogin(username);
     }
 
-    public boolean verifyUser(String token) {
-        User user = userRepository.findById(token)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        user.setEmailVerified(true);
-        userRepository.save(user);
-
-        return true;
-    }
 }

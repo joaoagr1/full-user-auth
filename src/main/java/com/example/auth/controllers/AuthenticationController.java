@@ -7,7 +7,8 @@ import com.example.auth.domain.SuccessResponseDTO;
 import com.example.auth.infra.security.TokenService;
 import com.example.auth.repositories.UserRepository;
 import com.example.auth.services.AuthorizationService;
-import com.example.auth.services.CredService;
+import com.example.auth.services.LoginService;
+import com.example.auth.services.RegisterService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,38 +19,31 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("auth")
 public class AuthenticationController {
-    @Autowired
-    private AuthenticationManager authenticationManager;
+
     @Autowired
     private UserRepository repository;
-    @Autowired
-    private TokenService tokenService;
 
     @Autowired
-    private AuthorizationService authorizationService;
+    private LoginService loginService;
 
     @Autowired
-    private CredService credService;
+    private RegisterService registerService;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid LoginRequestDTO data){
-
-      String token =  credService.login(data.login(), data.password());
-      return ResponseEntity.ok(new LoginResponseDTO(token));
-
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO data) {
+        String token = loginService.login(data.login(), data.password());
+        return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterDTO data) {
-
-        credService.register(data);
+    public ResponseEntity<SuccessResponseDTO> register(@RequestBody @Valid RegisterDTO data) {
+        registerService.register(data);
         return ResponseEntity.ok(new SuccessResponseDTO("User created successfully."));
-
     }
 
     @GetMapping("/confirm")
     public ResponseEntity<String> confirmEmail(@RequestParam("token") String token) {
-        boolean isVerified = authorizationService.verifyUser(token);
+        boolean isVerified = registerService.verifyUser(token);
         if (isVerified) {
             return ResponseEntity.ok("Email confirmado com sucesso!");
         } else {
@@ -57,25 +51,17 @@ public class AuthenticationController {
         }
     }
 
-    @GetMapping("list-users")
-    public ResponseEntity<?> listUsers() {
-        return ResponseEntity.ok(repository.findAll());
-    }
-
 
     @PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(@RequestParam("email") String email) {
-        credService.generatePasswordResetToken(email);
+        loginService.generatePasswordResetToken(email);
         return ResponseEntity.ok("Token de recuperação de senha enviado para o e-mail.");
     }
-
 
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@RequestParam("token") String token,
                                                 @RequestParam("newPassword") String newPassword) {
-        credService.resetPassword(token, newPassword);
+        loginService.resetPassword(token, newPassword);
         return ResponseEntity.ok("Senha redefinida com sucesso.");
     }
-
-
 }

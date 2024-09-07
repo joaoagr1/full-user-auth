@@ -3,11 +3,9 @@ package com.example.auth.services;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-
 
 @Service
 public class EmailService {
@@ -16,6 +14,7 @@ public class EmailService {
     private JavaMailSender mailSender;
 
     public void sendVerificationEmail(String to, String token) throws MessagingException {
+
         String subject = "Confirm your email address";
         String confirmationUrl = "http://localhost:8585/auth/confirm?token=" + token;
         String message = "<html><body><p>Please confirm your email address by clicking the following link:</p>"
