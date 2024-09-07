@@ -35,6 +35,8 @@ public class SecurityConfigurations {
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/auth/confirm").permitAll()
                         .requestMatchers("/auth/list-users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/auth/forgot-password").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/reset-password").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

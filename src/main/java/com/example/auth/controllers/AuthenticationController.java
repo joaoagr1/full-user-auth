@@ -63,4 +63,19 @@ public class AuthenticationController {
     }
 
 
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestParam("email") String email) {
+        credService.generatePasswordResetToken(email);
+        return ResponseEntity.ok("Token de recuperação de senha enviado para o e-mail.");
+    }
+
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam("token") String token,
+                                                @RequestParam("newPassword") String newPassword) {
+        credService.resetPassword(token, newPassword);
+        return ResponseEntity.ok("Senha redefinida com sucesso.");
+    }
+
+
 }
