@@ -1,14 +1,19 @@
 package com.authentication.module.controllers;
 
 import com.authentication.module.dtos.*;
+import com.authentication.module.infra.security.CustomAuthorization;
 import com.authentication.module.repositories.UserRepository;
 import com.authentication.module.services.LoginService;
 import com.authentication.module.services.RegisterService;
+import com.authentication.module.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.rmi.server.UID;
 
 @RestController
 @RequestMapping("auth")
@@ -18,7 +23,13 @@ public class AuthenticationController {
     private LoginService loginService;
 
     @Autowired
+    private CustomAuthorization customAuthorization;
+
+    @Autowired
     private RegisterService registerService;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO data) {
@@ -51,4 +62,13 @@ public class AuthenticationController {
         loginService.resetPassword(resetPasswordDTO.token(), resetPasswordDTO.newPassword());
         return ResponseEntity.ok(new SuccessResponseDTO("Senha redefinida com sucesso."));
     }
+
+    @DeleteMapping("/delete/{userId}")
+    @PreAuthorize("customAuthorization.canDeleteUser(principal, #userId)")
+    public ResponseEntity<String> deleteUser(@PathVariable String userId) {
+
+        userService.deleteUser(userId);
+        return ResponseEntity.ok("Usuário excluído com sucesso.");
+    }
+
 }

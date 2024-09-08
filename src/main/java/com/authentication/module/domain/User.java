@@ -68,6 +68,7 @@ public class User implements UserDetails {
         this.document = document;
         this.email = email;
         this.createdAt = LocalDateTime.now();
+        this.isEmailVerified = false;
     }
 
     @JsonIgnore
