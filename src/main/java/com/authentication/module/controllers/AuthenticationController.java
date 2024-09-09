@@ -69,5 +69,15 @@ public class AuthenticationController {
     }
 
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or #username == authentication.name")
+    @PutMapping("/update-password")
+    public ResponseEntity<SuccessResponseDTO> updatePassword(@RequestParam("username") String username, @RequestBody @Valid UpdatePasswordDTO updatePasswordDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String requestingUserName = authentication.getName();
+        userService.updatePassword(username, requestingUserName, updatePasswordDTO);
+        return ResponseEntity.ok(new SuccessResponseDTO("Senha atualizada com sucesso."));
+    }
+
+
 
 }
