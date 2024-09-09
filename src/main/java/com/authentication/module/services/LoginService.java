@@ -44,6 +44,7 @@ public class LoginService {
     private EmailService emailService;
 
     public String login(String login, String password) {
+
         Optional<User> user = userRepository.findUserByLogin(login);
 
         if (user.isEmpty()) {
