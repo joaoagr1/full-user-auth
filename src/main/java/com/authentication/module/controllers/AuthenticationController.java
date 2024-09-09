@@ -1,19 +1,16 @@
 package com.authentication.module.controllers;
 
 import com.authentication.module.dtos.*;
-import com.authentication.module.infra.security.CustomAuthorization;
-import com.authentication.module.repositories.UserRepository;
 import com.authentication.module.services.LoginService;
 import com.authentication.module.services.RegisterService;
 import com.authentication.module.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.rmi.server.UID;
 
 @RestController
 @RequestMapping("auth")
@@ -22,8 +19,6 @@ public class AuthenticationController {
     @Autowired
     private LoginService loginService;
 
-    @Autowired
-    private CustomAuthorization customAuthorization;
 
     @Autowired
     private RegisterService registerService;
@@ -63,12 +58,16 @@ public class AuthenticationController {
         return ResponseEntity.ok(new SuccessResponseDTO("Senha redefinida com sucesso."));
     }
 
-    @DeleteMapping("/delete/{userId}")
-    @PreAuthorize("customAuthorization.canDeleteUser(principal, #userId)")
-    public ResponseEntity<String> deleteUser(@PathVariable String userId) {
 
-        userService.deleteUser(userId);
-        return ResponseEntity.ok("Usuário excluído com sucesso.");
+    @PreAuthorize("hasRole('ROLE_ADMIN') or #username == authentication.name")
+    @DeleteMapping("/delete")
+    public ResponseEntity<SuccessResponseDTO> deleteUser(@RequestParam("username") String username) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String requestingUserName = authentication.getName();
+        userService.deleteUser(username, requestingUserName);
+        return ResponseEntity.ok(new SuccessResponseDTO("Usuário deletado com sucesso."));
     }
+
+
 
 }

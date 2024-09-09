@@ -24,7 +24,6 @@ public class SecurityConfigurations {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf(csrf -> csrf
-                        // Desabilita CSRF para o console H2
                         .ignoringRequestMatchers("/h2-console/**").disable()
                 )
                 .authorizeHttpRequests(authorize -> authorize
@@ -32,22 +31,19 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll() // Permite acesso ao console H2
+                        .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/auth/confirm").permitAll()
                         .requestMatchers("/auth/list-users").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/auth/forgot-password").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/reset-password").permitAll()
                         .anyRequest().authenticated()
                 )
-                // Permite o uso de frames para o console H2
                 .headers(headers -> headers.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new CustomAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }
-
 
 
 
