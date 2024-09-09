@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,9 +18,11 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Transactional
     public void deleteUser(String username, String requestingUserEmail) {
-
         Optional<User> deletedUser = userRepository.findUserByLogin(username);
 
         if (deletedUser.get().getLogin().equals(requestingUserEmail) || isAdmin(requestingUserEmail)) {
@@ -30,33 +33,32 @@ public class UserService {
     }
 
     private boolean isAdmin(String email) {
-        Optional<User> userOptional = userRepository.findByEmail(email);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            // Verifique se o papel do usuário é ADMIN
-            return "ADMIN".equals(user.getRole());
-        }
-        return false;
+        return userRepository.findByEmail(email)
+                .map(user -> "ADMIN".equals(user.getRole()))
+                .orElse(false);
     }
 
     public void updatePassword(String username, String requestingUserName, @Valid UpdatePasswordDTO updatePasswordDTO) {
+        Optional<User> userOptional = userRepository.findUserByLogin(username);
 
-            Optional<User> userOptional = userRepository.findUserByLogin(username);
+        if (!updatePasswordDTO.newPassword().equals(updatePasswordDTO.confirmNewPassword())) {
+            throw new AccessDeniedException("As senhas não coincidem.");
+        }
 
-            if (userOptional.isPresent()) {
-                User user = userOptional.get();
-                if (user.getLogin().equals(requestingUserName) || isAdmin(requestingUserName)) {
-                    if (user.getPassword().equals(updatePasswordDTO.oldPassword())) {
-                        user.setPassword(updatePasswordDTO.newPassword());
-                        userRepository.save(user);
-                    } else {
-                        throw new AccessDeniedException("Senha antiga incorreta.");
-                    }
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (user.getLogin().equals(requestingUserName) || isAdmin(requestingUserName)) {
+                if (passwordEncoder.matches(updatePasswordDTO.oldPassword(), user.getPassword())) {
+                    user.setPassword(passwordEncoder.encode(updatePasswordDTO.newPassword()));
+                    userRepository.save(user);
                 } else {
-                    throw new AccessDeniedException("Usuário não autorizado para alterar a senha deste usuário.");
+                    throw new AccessDeniedException("Senha antiga incorreta.");
                 }
             } else {
-                throw new AccessDeniedException("Usuário não encontrado.");
+                throw new AccessDeniedException("Usuário não autorizado para alterar a senha deste usuário.");
             }
+        } else {
+            throw new AccessDeniedException("Usuário não encontrado.");
+        }
     }
 }
