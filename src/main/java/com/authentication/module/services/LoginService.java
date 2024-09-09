@@ -43,19 +43,23 @@ public class LoginService {
     @Autowired
     private EmailService emailService;
 
-    public String login(String login, String password) {
+    public String login(String identifier, String password) {
 
-        Optional<User> user = userRepository.findUserByLogin(login);
+        Optional<User> user = userRepository.findUserByLogin(identifier);
 
         if (user.isEmpty()) {
-            throw new UsernameNotFoundException("Usuário não encontrado com o login: " + login);
+            user = userRepository.findByEmail(identifier);
+            if (user.isEmpty()) {
+                throw new UsernameNotFoundException("Usuário não encontrado com o login ou e-mail: " + identifier);
+            }
         }
 
         verifyEmail(user.get());
-        Authentication auth = authenticateUser(login, password);
+        Authentication auth = authenticateUser(user.get().getLogin(), password);
 
         return generateToken(auth);
     }
+
 
     @SneakyThrows
     public void generatePasswordResetToken(String email) {
