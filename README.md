@@ -1,73 +1,222 @@
-# Authentication API
+# Authentication Module
 
-![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
-![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
-![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
-![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
+## Overview
 
-This project is an API built using **Java, Java Spring, Flyway Migrations, PostgresSQL as the database, and Spring Security and JWT for authentication control.**
-
-The API was developed for my [Youtube Tutorial](https://www.youtube.com/watch?v=5w-YCcOjPD0), to demonstrate how to configure Authenticatio and Authorization in Spring application using Spring Security.
+This project is an authentication module built with Java and Spring Boot. It provides functionalities for user registration, login, password management, and email verification.
 
 ## Table of Contents
 
-- [Installation](#installation)
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [Endpoints](#endpoints)
+- [DTOs](#dtos)
+- [Services](#services)
+- [Repositories](#repositories)
+- [Security](#security)
 - [Configuration](#configuration)
-- [Usage](#usage)
-- [API Endpoints](#api-endpoints)
-- [Authentication](#authentication)
-- [Database](#database)
-- [Contributing](#contributing)
 
-## Installation
+## Getting Started
+
+### Prerequisites
+
+- Java 17 or higher
+- Maven 3.6.0 or higher
+- A running instance of a database (e.g., PostgreSQL)
+
+### Installation
 
 1. Clone the repository:
+   ```sh
+   git clone https://github.com/yourusername/authentication-module.git
+   cd authentication-module
+   ```
 
-```bash
-git clone https://github.com/Fernanda-Kipper/auth-api.git
+2. Configure the database connection in `src/main/resources/application.properties`:
+   ```properties
+   spring.datasource.url=jdbc:postgresql://localhost:5432/yourdatabase
+   spring.datasource.username=yourusername
+   spring.datasource.password=yourpassword
+   ```
+
+3. Build the project:
+   ```sh
+   mvn clean install
+   ```
+
+4. Run the application:
+   ```sh
+   mvn spring-boot:run
+   ```
+
+## Project Structure
+
+```plaintext
+src/
+├── main/
+│   ├── java/
+│   │   └── com/
+│   │       └── authentication/
+│   │           ├── controllers/
+│   │           ├── domain/
+│   │           ├── dtos/
+│   │           ├── exceptions/
+│   │           ├── repositories/
+│   │           ├── services/
+│   │           └── AuthenticationModuleApplication.java
+│   └── resources/
+│       ├── application.properties
+│       └── templates/
+└── test/
+    └── java/
+        └── com/
+            └── authentication/
 ```
 
-2. Install dependencies with Maven
+## Endpoints
 
-3. Install [PostgresSQL](https://www.postgresql.org/)
+### AuthenticationController
 
-## Usage
+- **POST /auth/login**
+  - Description: Authenticates a user and returns a JWT token.
+  - Request Body: `LoginRequestDTO`
+  - Response: `LoginResponseDTO`
 
-1. Start the application with Maven
-2. The API will be accessible at http://localhost:8080
+- **POST /auth/register**
+  - Description: Registers a new user.
+  - Request Body: `RegisterDTO`
+  - Response: `SuccessResponseDTO`
 
+- **GET /auth/confirm**
+  - Description: Confirms a user's email using a token.
+  - Request Param: `token`
+  - Response: `SuccessResponseDTO`
 
-## API Endpoints
-The API provides the following endpoints:
+- **POST /auth/forgot-password**
+  - Description: Generates a password reset token and sends it to the user's email.
+  - Request Param: `email`
+  - Response: `SuccessResponseDTO`
 
-```markdown
-GET /product - Retrieve a list of all products. (all authenticated users)
+- **POST /auth/reset-password**
+  - Description: Resets the user's password using a token.
+  - Request Body: `ResetPasswordDTO`
+  - Response: `SuccessResponseDTO`
 
-POST /product - Register a new product (ADMIN access required).
+- **DELETE /auth/delete**
+  - Description: Deletes a user.
+  - Request Param: `username`
+  - Response: `SuccessResponseDTO`
 
-POST /auth/login - Login into the App
+- **PUT /auth/update-password**
+  - Description: Updates the user's password.
+  - Request Param: `username`
+  - Request Body: `UpdatePasswordDTO`
+  - Response: `SuccessResponseDTO`
 
-POST /auth/register - Register a new user into the App
+## DTOs
+
+### LoginRequestDTO
+
+```java
+public record LoginRequestDTO(String login, String password) {}
 ```
 
-## Authentication
-The API uses Spring Security for authentication control. The following roles are available:
+### LoginResponseDTO
 
+```java
+public record LoginResponseDTO(String token) {}
 ```
-USER -> Standard user role for logged-in users.
-ADMIN -> Admin role for managing partners (registering new partners).
+
+### RegisterDTO
+
+```java
+public record RegisterDTO(String login, String password, String role, String document, String email) {}
 ```
-To access protected endpoints as an ADMIN user, provide the appropriate authentication credentials in the request header.
 
-## Database
-The project utilizes [PostgresSQL](https://www.postgresql.org/) as the database. The necessary database migrations are managed using Flyway.
+### SuccessResponseDTO
 
-## Contributing
+```java
+public record SuccessResponseDTO(String message) {}
+```
 
-Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request to the repository.
+### ResetPasswordDTO
 
-When contributing to this project, please follow the existing code style, [commit conventions](https://www.conventionalcommits.org/en/v1.0.0/), and submit your changes in a separate branch.
+```java
+public record ResetPasswordDTO(String token, String newPassword) {}
+```
 
+### UpdatePasswordDTO
 
+```java
+public record UpdatePasswordDTO(String oldPassword, String newPassword, String confirmNewPassword) {}
+```
 
+## Services
 
+### LoginService
+
+Handles user authentication, password reset, and token generation.
+
+### RegisterService
+
+Handles user registration and email verification.
+
+### UserService
+
+Handles user management, including password updates and user deletion.
+
+### TokenService
+
+Handles JWT token generation and validation.
+
+## Repositories
+
+### UserRepository
+
+```java
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findUserByLogin(String login);
+    Optional<User> findByEmail(String email);
+    boolean existsByLogin(String login);
+    boolean existsByDocument(String document);
+    boolean existsByEmail(String email);
+}
+```
+
+### LoginRepository
+
+```java
+public interface LoginRepository extends JpaRepository<Login, Long> {}
+```
+
+### PasswordResetTokenRepository
+
+```java
+public interface PasswordResetTokenRepository extends JpaRepository<PasswordResetToken, Long> {
+    Optional<PasswordResetToken> findByToken(String token);
+}
+```
+
+## Security
+
+### Password Encoding
+
+Passwords are encoded using `BCryptPasswordEncoder`.
+
+### JWT
+
+JWT tokens are used for authentication. Tokens are generated and validated using the `TokenService`.
+
+## Configuration
+
+### application.properties
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/yourdatabase
+spring.datasource.username=yourusername
+spring.datasource.password=yourpassword
+api.security.token.secret=your-secret-key
+```
+
+## License
+
+This project is licensed under the MIT License. See the `LICENSE` file for details.
