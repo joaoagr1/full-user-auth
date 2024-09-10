@@ -2,6 +2,7 @@ package com.authentication.module.services;
 
 import com.authentication.module.domain.PasswordResetToken;
 import com.authentication.module.domain.User;
+import com.authentication.module.dtos.LoginResponseDTO;
 import com.authentication.module.exceptions.custom.InvalidTokenException;
 import com.authentication.module.exceptions.custom.UserNotVerifiedException;
 import com.authentication.module.repositories.LoginRepository;
@@ -43,7 +44,7 @@ public class LoginService {
     @Autowired
     private EmailService emailService;
 
-    public String login(String identifier, String password) {
+    public LoginResponseDTO login(String identifier, String password) {
 
         Optional<User> user = userRepository.findUserByLogin(identifier);
 
@@ -57,7 +58,7 @@ public class LoginService {
         verifyEmail(user.get());
         Authentication auth = authenticateUser(user.get().getLogin(), password);
 
-        return generateToken(auth);
+        return new LoginResponseDTO(generateToken(auth),user.get());
     }
 
 
