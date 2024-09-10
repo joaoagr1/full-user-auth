@@ -5,7 +5,8 @@ import lombok.*;
 
 import java.util.Set;
 
-@Entity
+@Entity(name = "categories")
+@Table(name = "categories")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,6 +16,8 @@ public class Category {
     private Long id;
 
     private String nome;
+
+    private String description;
 
     @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL)
     private Set<News> noticias;
