@@ -20,6 +20,5 @@ public class Category {
 
     private String description;
 
-    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL)
-    private Set<News> noticias;
+
 }
