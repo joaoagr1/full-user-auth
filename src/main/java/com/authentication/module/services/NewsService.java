@@ -46,4 +46,8 @@ public class NewsService {
     public void deleteNews(Long newsId) {
         newsRepository.deleteById(newsId);
     }
+
+    public Iterable<News> listNews() {
+        return newsRepository.findAll();
+    }
 }

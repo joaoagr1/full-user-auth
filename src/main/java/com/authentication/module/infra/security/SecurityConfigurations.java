@@ -37,7 +37,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/auth/forgot-password").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/reset-password").permitAll()
                         .requestMatchers(HttpMethod.POST, "/news/category/create").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/news/create").permitAll()
+                        .requestMatchers("/news/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers.disable())

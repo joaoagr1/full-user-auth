@@ -39,4 +39,10 @@ public class NewsController {
         newsService.deleteNews(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/list")
+    public ResponseEntity<Iterable<News>> listNews() {
+        Iterable<News> news = newsService.listNews();
+        return ResponseEntity.ok(news);
+    }
 }
