@@ -1,7 +1,7 @@
 package com.authentication.module.services;
 
 import com.authentication.module.domain.News;
-import com.authentication.module.domain.Category;
+import com.authentication.module.domain.Categories;
 import com.authentication.module.domain.Favorites;
 import com.authentication.module.dtos.NewsRequest;
 import com.authentication.module.repositories.NewsRepository;
@@ -24,19 +24,19 @@ public class NewsService {
 
 
     public News createNews(NewsRequest newsRequest) {
-        Category category = categoryRepository.findById(newsRequest.categoryId())
+        Categories categories = categoryRepository.findById(newsRequest.categoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
         News news = new News();
         news.setTitulo(newsRequest.title());
         news.setConteudo(newsRequest.content());
-        news.setCategoria(category);
+        news.setCategoria(categories);
 
         return newsRepository.save(news);
     }
 
-    public Category createCategory(Category category) {
-        return categoryRepository.save(category);
+    public Categories createCategory(Categories categories) {
+        return categoryRepository.save(categories);
     }
 
     public Favorites addToFavorites(Favorites favorite) {

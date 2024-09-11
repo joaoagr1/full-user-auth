@@ -1,7 +1,7 @@
 package com.authentication.module.services;
 
-import com.authentication.module.domain.PasswordResetToken;
-import com.authentication.module.domain.User;
+import com.authentication.module.domain.PasswordResetTokens;
+import com.authentication.module.domain.Users;
 import com.authentication.module.dtos.LoginResponseDTO;
 import com.authentication.module.exceptions.custom.InvalidTokenException;
 import com.authentication.module.exceptions.custom.UserNotVerifiedException;
@@ -46,7 +46,7 @@ public class LoginService {
 
     public LoginResponseDTO login(String identifier, String password) {
 
-        Optional<User> user = userRepository.findUserByLogin(identifier);
+        Optional<Users> user = userRepository.findUserByLogin(identifier);
 
         if (user.isEmpty()) {
             user = userRepository.findByEmail(identifier);
@@ -64,35 +64,35 @@ public class LoginService {
 
     @SneakyThrows
     public void generatePasswordResetToken(String email) {
-        Optional<User> userOptional = userRepository.findByEmail(email);
+        Optional<Users> userOptional = userRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
             throw new UsernameNotFoundException("Usuário não encontrado com o e-mail: " + email);
         }
 
-        User user = userOptional.get();
+        Users users = userOptional.get();
         String token = UUID.randomUUID().toString();
-        PasswordResetToken passwordResetToken = new PasswordResetToken(token, user);
+        PasswordResetTokens passwordResetTokens = new PasswordResetTokens(token, users);
 
-        tokenRepository.save(passwordResetToken);
+        tokenRepository.save(passwordResetTokens);
 
 
-        emailService.sendPasswordResetEmail(user.getEmail(), token);
+        emailService.sendPasswordResetEmail(users.getEmail(), token);
     }
 
     public void resetPassword(String token, String newPassword) {
-        PasswordResetToken resetToken = tokenRepository.findByToken(token)
+        PasswordResetTokens resetToken = tokenRepository.findByToken(token)
                 .orElseThrow(() -> new InvalidTokenException("Token inválido ou expirado.", null));
 
-        User user = resetToken.getUser();
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
+        Users users = resetToken.getUsers();
+        users.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(users);
 
 
         tokenRepository.delete(resetToken);
     }
 
-    private void verifyEmail(User user) {
-        if (!user.isEmailVerified()) {
+    private void verifyEmail(Users users) {
+        if (!users.isEmailVerified()) {
             throw new UserNotVerifiedException("Email not verified");
         }
     }
@@ -103,6 +103,6 @@ public class LoginService {
     }
 
     private String generateToken(Authentication auth) {
-        return tokenService.generateToken((User) auth.getPrincipal());
+        return tokenService.generateToken((Users) auth.getPrincipal());
     }
 }

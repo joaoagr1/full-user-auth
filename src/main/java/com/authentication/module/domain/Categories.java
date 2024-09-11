@@ -3,14 +3,12 @@ package com.authentication.module.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
-
-@Entity(name = "category")
-@Table(name = "category")
+@Entity(name = "categories")
+@Table(name = "categories")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Category {
+public class Categories {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

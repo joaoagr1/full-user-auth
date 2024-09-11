@@ -1,7 +1,7 @@
 package com.authentication.module.services;
 
+import com.authentication.module.domain.Users;
 import com.authentication.module.dtos.RegisterDTO;
-import com.authentication.module.domain.User;
 import com.authentication.module.exceptions.custom.DocumentAlreadyExistsException;
 import com.authentication.module.exceptions.custom.EmailAlreadyExistsException;
 import com.authentication.module.exceptions.custom.LoginAlreadyExistsException;
@@ -29,9 +29,9 @@ public class RegisterService {
     public void register(RegisterDTO data) {
 
         validateRegistrationData(data);
-        User newUser = createUser(data);
-        userRepositoryepository.save(newUser);
-        emailService.sendVerificationEmail(newUser.getEmail(), newUser.getId());    }
+        Users newUsers = createUser(data);
+        userRepositoryepository.save(newUsers);
+        emailService.sendVerificationEmail(newUsers.getEmail(), newUsers.getId());    }
 
     private void validateRegistrationData(RegisterDTO data) {
         Map<BooleanSupplier, Supplier<RuntimeException>> validations = Map.of(
@@ -45,20 +45,20 @@ public class RegisterService {
         });
     }
 
-    private User createUser(RegisterDTO data) {
+    private Users createUser(RegisterDTO data) {
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-        return new User(data.login(), encryptedPassword, data.role(), data.document(), data.email());
+        return new Users(data.login(), encryptedPassword, data.role(), data.document(), data.email());
     }
 
 
 
     public boolean verifyUser(String token) {
 
-        User user = userRepositoryepository.findById(token)
+        Users users = userRepositoryepository.findById(token)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        user.setEmailVerified(true);
-        userRepositoryepository.save(user);
+        users.setEmailVerified(true);
+        userRepositoryepository.save(users);
 
         return true;
     }

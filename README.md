@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is an authentication module built with Java and Spring Boot. It provides functionalities for user registration, login, password management, and email verification.
+This project is an authentication module built with Java and Spring Boot. It provides functionalities for users registration, login, password management, and email verification.
 
 ## Table of Contents
 
@@ -77,37 +77,37 @@ src/
 ### AuthenticationController
 
 - **POST /auth/login**
-  - Description: Authenticates a user and returns a JWT token.
+  - Description: Authenticates a users and returns a JWT token.
   - Request Body: `LoginRequestDTO`
   - Response: `LoginResponseDTO`
 
 - **POST /auth/register**
-  - Description: Registers a new user.
+  - Description: Registers a new users.
   - Request Body: `RegisterDTO`
   - Response: `SuccessResponseDTO`
 
 - **GET /auth/confirm**
-  - Description: Confirms a user's email using a token.
+  - Description: Confirms a users's email using a token.
   - Request Param: `token`
   - Response: `SuccessResponseDTO`
 
 - **POST /auth/forgot-password**
-  - Description: Generates a password reset token and sends it to the user's email.
+  - Description: Generates a password reset token and sends it to the users's email.
   - Request Param: `email`
   - Response: `SuccessResponseDTO`
 
 - **POST /auth/reset-password**
-  - Description: Resets the user's password using a token.
+  - Description: Resets the users's password using a token.
   - Request Body: `ResetPasswordDTO`
   - Response: `SuccessResponseDTO`
 
 - **DELETE /auth/delete**
-  - Description: Deletes a user.
+  - Description: Deletes a users.
   - Request Param: `username`
   - Response: `SuccessResponseDTO`
 
 - **PUT /auth/update-password**
-  - Description: Updates the user's password.
+  - Description: Updates the users's password.
   - Request Param: `username`
   - Request Body: `UpdatePasswordDTO`
   - Response: `SuccessResponseDTO`
@@ -154,15 +154,15 @@ public record UpdatePasswordDTO(String oldPassword, String newPassword, String c
 
 ### LoginService
 
-Handles user authentication, password reset, and token generation.
+Handles users authentication, password reset, and token generation.
 
 ### RegisterService
 
-Handles user registration and email verification.
+Handles users registration and email verification.
 
 ### UserService
 
-Handles user management, including password updates and user deletion.
+Handles users management, including password updates and users deletion.
 
 ### TokenService
 

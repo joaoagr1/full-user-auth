@@ -1,7 +1,7 @@
 package com.authentication.module.controllers;
 
 import com.authentication.module.domain.News;
-import com.authentication.module.domain.Category;
+import com.authentication.module.domain.Categories;
 import com.authentication.module.domain.Favorites;
 import com.authentication.module.dtos.NewsRequest;
 import com.authentication.module.services.NewsService;
@@ -23,9 +23,9 @@ public class NewsController {
     }
 
     @PostMapping("/category/create")
-    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-        Category createdCategory = newsService.createCategory(category);
-        return ResponseEntity.ok(createdCategory);
+    public ResponseEntity<Categories> createCategory(@RequestBody Categories categories) {
+        Categories createdCategories = newsService.createCategory(categories);
+        return ResponseEntity.ok(createdCategories);
     }
 
     @PostMapping("/favorites/add")

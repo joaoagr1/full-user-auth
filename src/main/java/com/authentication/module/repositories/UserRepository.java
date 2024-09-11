@@ -1,12 +1,12 @@
 package com.authentication.module.repositories;
 
-import com.authentication.module.domain.User;
+import com.authentication.module.domain.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User, String> {
+public interface UserRepository extends JpaRepository<Users, String> {
   
     UserDetails findByLogin(String login);
 
@@ -17,9 +17,9 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     boolean existsByEmail(String email);
 
-    Optional<User> findByEmail(String email);
+    Optional<Users> findByEmail(String email);
 
-    Optional<User> findUserByLogin(String login);
+    Optional<Users> findUserByLogin(String login);
 
     void deleteByEmail(String email);
 

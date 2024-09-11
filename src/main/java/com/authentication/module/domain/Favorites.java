@@ -15,7 +15,7 @@ public class Favorites {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")
-    private User usuario;
+    private Users usuario;
 
     @ManyToOne
     @JoinColumn(name = "noticia_id")

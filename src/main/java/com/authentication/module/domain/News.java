@@ -25,5 +25,5 @@ public class News {
 
     @ManyToOne
     @JoinColumn(name = "categoria_id")
-    private Category categoria;
+    private Categories categoria;
 }

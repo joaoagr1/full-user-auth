@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Table(name = "password_reset_token")
-@Entity(name = "PasswordResetToken")
+@Table(name = "password_reset_tokens")
+@Entity(name = "PasswordResetTokens")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class PasswordResetToken {
+public class PasswordResetTokens {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,15 +20,15 @@ public class PasswordResetToken {
 
     private String token;
 
-    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = Users.class, fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "user_id")
-    private User user;
+    private Users users;
 
     private LocalDateTime expiryDate;
 
-    public PasswordResetToken(String token, User user) {
+    public PasswordResetTokens(String token, Users users) {
         this.token = token;
-        this.user = user;
+        this.users = users;
         this.expiryDate = LocalDateTime.now().plusSeconds(1); // Token válido por 1 hora
     }
 
