@@ -1,0 +1,49 @@
+package com.authentication.module.services;
+
+import com.authentication.module.domain.News;
+import com.authentication.module.domain.Category;
+import com.authentication.module.domain.Favorites;
+import com.authentication.module.dtos.NewsRequest;
+import com.authentication.module.repositories.NewsRepository;
+import com.authentication.module.repositories.CategoryRepository;
+import com.authentication.module.repositories.FavoritesRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class NewsService {
+
+    @Autowired
+    private NewsRepository newsRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private FavoritesRepository favoritesRepository;
+
+
+    public News createNews(NewsRequest newsRequest) {
+        Category category = categoryRepository.findById(newsRequest.categoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        News news = new News();
+        news.setTitulo(newsRequest.title());
+        news.setConteudo(newsRequest.content());
+        news.setCategoria(category);
+
+        return newsRepository.save(news);
+    }
+
+    public Category createCategory(Category category) {
+        return categoryRepository.save(category);
+    }
+
+    public Favorites addToFavorites(Favorites favorite) {
+        return favoritesRepository.save(favorite);
+    }
+
+    public void deleteNews(Long newsId) {
+        newsRepository.deleteById(newsId);
+    }
+}

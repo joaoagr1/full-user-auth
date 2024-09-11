@@ -5,12 +5,13 @@ import lombok.*;
 
 import java.util.Set;
 
-@Entity(name = "categories")
-@Table(name = "categories")
+@Entity(name = "category")
+@Table(name = "category")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Category {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
