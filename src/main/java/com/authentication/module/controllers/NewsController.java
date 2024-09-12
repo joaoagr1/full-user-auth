@@ -8,6 +8,9 @@ import com.authentication.module.services.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/news")
@@ -17,8 +20,18 @@ public class NewsController {
     private NewsService newsService;
 
     @PostMapping("/create")
-    public ResponseEntity<News> createNews(@RequestBody NewsRequest news) {
-        News createdNews = newsService.createNews(news);
+    public ResponseEntity<News> createNews(
+            @RequestParam("title") String title,
+            @RequestParam("content") String content,
+            @RequestParam("categoryId") Long categoryId,
+            @RequestParam("author") String author,
+            @RequestParam("summary") String summary,
+            @RequestParam("listImage") MultipartFile listImage,
+            @RequestParam("bodyImage1") MultipartFile bodyImage1,
+            @RequestParam("bodyImage2") MultipartFile bodyImage2) throws IOException {
+
+        NewsRequest newsRequest = new NewsRequest(title, content, categoryId, author, summary, listImage, bodyImage1, bodyImage2);
+        News createdNews = newsService.createNews(newsRequest);
         return ResponseEntity.ok(createdNews);
     }
 
@@ -45,4 +58,11 @@ public class NewsController {
         Iterable<News> news = newsService.listNews();
         return ResponseEntity.ok(news);
     }
+
+    @GetMapping("/categories/list")
+    public ResponseEntity<Iterable<Categories>> listCategories() {
+        Iterable<Categories> categories = newsService.listCategories();
+        return ResponseEntity.ok(categories);
+    }
+
 }

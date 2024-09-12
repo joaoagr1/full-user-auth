@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class News {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,4 +25,14 @@ public class News {
     @ManyToOne
     @JoinColumn(name = "categoria_id")
     private Categories categoria;
+
+    // New fields
+    @Lob
+    private byte[] listImage;
+
+    @Lob
+    private byte[] bodyImage1;
+
+    @Lob
+    private byte[] bodyImage2;
 }

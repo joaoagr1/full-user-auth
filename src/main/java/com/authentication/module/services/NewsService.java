@@ -10,6 +10,8 @@ import com.authentication.module.repositories.FavoritesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 @Service
 public class NewsService {
 
@@ -23,7 +25,13 @@ public class NewsService {
     private FavoritesRepository favoritesRepository;
 
 
-    public News createNews(NewsRequest newsRequest) {
+    public Iterable<Categories> listCategories() {
+        return categoryRepository.findAll();
+    }
+
+
+
+    public News createNews(NewsRequest newsRequest) throws IOException {
         Categories categories = categoryRepository.findById(newsRequest.categoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
@@ -31,11 +39,15 @@ public class NewsService {
         news.setTitulo(newsRequest.title());
         news.setConteudo(newsRequest.content());
         news.setCategoria(categories);
+        news.setListImage(newsRequest.listImage().getBytes());   // Set new field
+        news.setBodyImage1(newsRequest.bodyImage1().getBytes()); // Set new field
+        news.setBodyImage2(newsRequest.bodyImage2().getBytes()); // Set new field
 
         return newsRepository.save(news);
     }
 
-    public Categories createCategory(Categories categories) {
+
+        public Categories createCategory(Categories categories) {
         return categoryRepository.save(categories);
     }
 
