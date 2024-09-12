@@ -10,6 +10,8 @@ import com.authentication.module.repositories.FavoritesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class NewsService {
 
@@ -50,4 +52,15 @@ public class NewsService {
     public Iterable<News> listNews() {
         return newsRepository.findAll();
     }
+
+    public Iterable<Categories> listCategories() {
+        return categoryRepository.findAll();
+    }
+
+    public List<News> listNewsByCategory(Long categoryId) {
+        Categories category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+        return newsRepository.findByCategoria(category);
+    }
+
 }
