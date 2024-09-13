@@ -20,7 +20,7 @@ public class PasswordResetTokens {
 
     private String token;
 
-    @OneToOne(targetEntity = Users.class, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "user_id")
     private Users users;
 

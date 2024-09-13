@@ -55,8 +55,10 @@ public class LoginService {
             }
         }
 
-        verifyEmail(user.get());
         Authentication auth = authenticateUser(user.get().getLogin(), password);
+
+        verifyEmail(user.get());
+
 
         return new LoginResponseDTO(generateToken(auth),user.get());
     }
