@@ -42,7 +42,7 @@ public class UserService {
         Optional<Users> userOptional = userRepository.findUserByLogin(username);
 
         if (!updatePasswordDTO.newPassword().equals(updatePasswordDTO.confirmNewPassword())) {
-            throw new AccessDeniedException("As senhas não coincidem.");
+            throw new AccessDeniedException("Passwords do not match");
         }
 
         if (userOptional.isPresent()) {
@@ -52,13 +52,13 @@ public class UserService {
                     users.setPassword(passwordEncoder.encode(updatePasswordDTO.newPassword()));
                     userRepository.save(users);
                 } else {
-                    throw new AccessDeniedException("Senha antiga incorreta.");
+                    throw new AccessDeniedException("Incorrect old password");
                 }
             } else {
                 throw new AccessDeniedException("Usuário não autorizado para alterar a senha deste usuário.");
             }
         } else {
-            throw new AccessDeniedException("Usuário não encontrado.");
+            throw new AccessDeniedException("User not found");
         }
     }
 }

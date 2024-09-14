@@ -35,7 +35,7 @@ public class RegisterService {
 
     private void validateRegistrationData(RegisterDTO data) {
         Map<BooleanSupplier, Supplier<RuntimeException>> validations = Map.of(
-                () -> userRepositoryepository.existsByLogin(data.login()), () -> new LoginAlreadyExistsException("Login already exists."),
+                () -> userRepositoryepository.existsByLogin(data.login()), () -> new LoginAlreadyExistsException("Username already exists."),
                 () -> userRepositoryepository.existsByDocument(data.document()), () -> new DocumentAlreadyExistsException("Document already in use."),
                 () -> userRepositoryepository.existsByEmail(data.email()), () -> new EmailAlreadyExistsException("Email already in use.")
         );

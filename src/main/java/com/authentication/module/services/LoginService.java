@@ -51,7 +51,7 @@ public class LoginService {
         if (user.isEmpty()) {
             user = userRepository.findByEmail(identifier);
             if (user.isEmpty()) {
-                throw new UsernameNotFoundException("Usuário não encontrado com o login ou e-mail: " + identifier);
+                throw new UsernameNotFoundException("User not found with the username or email: " + identifier);
             }
         }
 
@@ -68,7 +68,7 @@ public class LoginService {
     public void generatePasswordResetToken(String email) {
         Optional<Users> userOptional = userRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
-            throw new UsernameNotFoundException("Usuário não encontrado com o e-mail: " + email);
+            throw new UsernameNotFoundException("User not found with the email: " + email);
         }
 
         Users users = userOptional.get();
@@ -83,7 +83,7 @@ public class LoginService {
 
     public void resetPassword(String token, String newPassword) {
         PasswordResetTokens resetToken = tokenRepository.findByToken(token)
-                .orElseThrow(() -> new InvalidTokenException("Token inválido ou expirado.", null));
+                .orElseThrow(() -> new InvalidTokenException("Invalid or expired token", null));
 
         Users users = resetToken.getUsers();
         users.setPassword(passwordEncoder.encode(newPassword));
