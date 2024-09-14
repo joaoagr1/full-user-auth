@@ -72,45 +72,9 @@ src/
             └── authentication/
 ```
 
-## Endpoints
+## Endpoints http://localhost:8585/swagger-ui/index.html#/
 
-### AuthenticationController
-
-- **POST /auth/login**
-  - Description: Authenticates a users and returns a JWT token.
-  - Request Body: `LoginRequestDTO`
-  - Response: `LoginResponseDTO`
-
-- **POST /auth/register**
-  - Description: Registers a new users.
-  - Request Body: `RegisterDTO`
-  - Response: `SuccessResponseDTO`
-
-- **GET /auth/confirm**
-  - Description: Confirms a users's email using a token.
-  - Request Param: `token`
-  - Response: `SuccessResponseDTO`
-
-- **POST /auth/forgot-password**
-  - Description: Generates a password reset token and sends it to the users's email.
-  - Request Param: `email`
-  - Response: `SuccessResponseDTO`
-
-- **POST /auth/reset-password**
-  - Description: Resets the users's password using a token.
-  - Request Body: `ResetPasswordDTO`
-  - Response: `SuccessResponseDTO`
-
-- **DELETE /auth/delete**
-  - Description: Deletes a users.
-  - Request Param: `username`
-  - Response: `SuccessResponseDTO`
-
-- **PUT /auth/update-password**
-  - Description: Updates the users's password.
-  - Request Param: `username`
-  - Request Body: `UpdatePasswordDTO`
-  - Response: `SuccessResponseDTO`
+![image](https://github.com/user-attachments/assets/ce2f16c7-68a8-457d-9283-a19db02243da)
 
 ## DTOs
 
