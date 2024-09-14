@@ -17,7 +17,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) throws IOException, ServletException {
         if (failed instanceof BadCredentialsException) {
-            throw new InvalidCredentialsException("Credenciais inválidas");
+            throw new InvalidCredentialsException("Invalid credentials");
         }
         super.unsuccessfulAuthentication(request, response, failed);
     }

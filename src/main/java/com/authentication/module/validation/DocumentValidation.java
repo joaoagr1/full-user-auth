@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DocumentValidation {
-    String message() default "Documento inválido";
+    String message() default "Invalid Document";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

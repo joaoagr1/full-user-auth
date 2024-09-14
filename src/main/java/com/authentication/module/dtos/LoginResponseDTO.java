@@ -1,7 +1,7 @@
 package com.authentication.module.dtos;
 
-import com.authentication.module.domain.User;
+import com.authentication.module.domain.Users;
 
 public record LoginResponseDTO(String token,
-                               User user) {
+                               Users users) {
 }

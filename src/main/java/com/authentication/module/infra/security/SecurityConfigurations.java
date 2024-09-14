@@ -36,6 +36,8 @@ public class SecurityConfigurations {
                         .requestMatchers("/auth/list-users").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/auth/forgot-password").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/reset-password").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/news/category/create").permitAll()
+                        .requestMatchers("/news/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers.disable())

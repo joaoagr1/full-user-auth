@@ -19,7 +19,6 @@ public class AuthenticationController {
     @Autowired
     private LoginService loginService;
 
-
     @Autowired
     private RegisterService registerService;
 

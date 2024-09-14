@@ -24,7 +24,7 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Setter
-public class User implements UserDetails {
+public class Users implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -61,7 +61,7 @@ public class User implements UserDetails {
 
 
 
-    public User(String login, String encryptedPassword, UserRole role, String document, String email) {
+    public Users(String login, String encryptedPassword, UserRole role, String document, String email) {
         this.login = login;
         this.password = encryptedPassword;
         this.role = (role != null) ? role : UserRole.USER;
