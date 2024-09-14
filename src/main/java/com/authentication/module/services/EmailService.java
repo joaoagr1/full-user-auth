@@ -24,7 +24,7 @@ public class EmailService {
 
     public void sendVerificationEmail(String to, String token) throws MessagingException {
         String subject = "Confirme seu endereço de e-mail";
-        String confirmationUrl = "http://localhost:8585/auth/confirm?token=" + token;
+        String confirmationUrl = "http://192.168.0.24:8585/auth/confirm?token=" + token;
         String message = "<html><body><p>Por favor, confirme seu endereço de e-mail clicando no link abaixo:</p>"
                 + "<a href='" + confirmationUrl + "'>Confirmar E-mail</a></body></html>";
 
