@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     @ResponseBody
     public ResponseEntity<ErrorResponseDTO> handleBadCredentialsException(BadCredentialsException ex) {
-        return new ResponseEntity<>(new ErrorResponseDTO("Credenciais inválidas"), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new ErrorResponseDTO("Invalid credentials"), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(LoginAlreadyExistsException.class)
